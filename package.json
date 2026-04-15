@@ -1,15 +1,16 @@
 {
   "name": "combat-ai",
   "version": "1.0.0",
-  "type": "module",
+  "description": "Combat AI Game System",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "cheerio": "^1.2.0",
-    "cors": "^2.8.6",
-    "express": "^5.2.1",
-    "node-fetch": "^3.3.2"
+    "express": "^4.18.2"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
