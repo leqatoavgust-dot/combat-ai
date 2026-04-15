@@ -1,33 +1,43 @@
 
-console.log("JS LOADED");
+console.log("APP LOADED");
 
 // ======================
-// 🔍 SCAN
+// 🔍 SCAN (ULTIMATE)
 // ======================
 document.getElementById("scanBtn").addEventListener("click", async () => {
 
-try{
+let name = document.getElementById("scanName").value.trim();
 
-let name = document.getElementById("scanName").value;
-if(!name) return alert("name yaz");
+if(!name){
+alert("Enter name");
+return;
+}
 
-let res = await fetch(`/api/scan?name=${name}`);
+// 1. open external profile (safe try)
+let url = "https://combats.life/inf.php?" + encodeURIComponent(name);
+window.open(url, "_blank");
+
+// 2. internal scan (our system)
+let res = await fetch("/api/scan?name=" + name);
 let data = await res.json();
 
-let s = data.stats || {};
+let out = document.getElementById("out");
 
-document.getElementById("out").innerHTML = `
+if(data.type === "local"){
+out.innerHTML = `
 <h3>🔍 SCAN RESULT</h3>
 <p>Name: ${data.name}</p>
-<p>Class: ${data.class}</p>
-<p>HP: ${s.hp}</p>
-<p>Crit: ${s.crit}</p>
-<p>Dodge: ${s.dodge}</p>
+<p>HP: ${data.stats.hp}</p>
+<p>Crit: ${data.stats.crit}</p>
+<p>Dodge: ${data.stats.dodge}</p>
 `;
-
-}catch(e){
-console.error(e);
-alert("scan error");
+}else{
+out.innerHTML = `
+<h3>🔍 SCAN RESULT</h3>
+<p>Name: ${data.name}</p>
+<p>⚠ No local data found</p>
+<p>External profile opened</p>
+`;
 }
 
 });
@@ -37,26 +47,29 @@ alert("scan error");
 // ======================
 document.getElementById("compareBtn").addEventListener("click", async () => {
 
-try{
+let a = document.getElementById("aName").value.trim();
+let b = document.getElementById("bName").value.trim();
 
-let a = document.getElementById("aName").value;
-let b = document.getElementById("bName").value;
-
-if(!a || !b) return alert("2 name yaz");
+if(!a || !b){
+alert("Enter both players");
+return;
+}
 
 let res = await fetch(`/api/compare?a=${a}&b=${b}`);
 let data = await res.json();
 
-document.getElementById("out").innerHTML = `
-<h3>⚔️ RESULT</h3>
+let out = document.getElementById("out");
+
+if(data.error){
+out.innerHTML = `<p>❌ ${data.error}</p>`;
+return;
+}
+
+out.innerHTML = `
+<h3>⚔️ BATTLE RESULT</h3>
 <p>${data.playerA} vs ${data.playerB}</p>
 <p>Score: ${data.scoreA} - ${data.scoreB}</p>
 <h2>🏆 Winner: ${data.winner}</h2>
 `;
-
-}catch(e){
-console.error(e);
-alert("compare error");
-}
 
 });
