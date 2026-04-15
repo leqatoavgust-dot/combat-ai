@@ -4,53 +4,42 @@ const app = express();
 
 app.use(express.static("public"));
 
-console.log("SERVER STARTED");
+app.get("/", (req, res) => {
+res.sendFile(process.cwd() + "/public/index.html");
+});
 
-// ======================
-// 🔍 SCAN SYSTEM
-// ======================
+// SCAN
 app.get("/api/scan", (req, res) => {
-
 let name = req.query.name || "unknown";
 
-// fake but stable stats
 res.json({
 name,
 class: "balanced",
 stats: {
-hp: 3000 + Math.floor(Math.random()*500),
-crit: 1000 + Math.floor(Math.random()*500),
-dodge: 800 + Math.floor(Math.random()*300)
+hp: 3200,
+crit: 1400,
+dodge: 900
 }
 });
-
 });
 
-// ======================
-// ⚔️ COMPARE SYSTEM
-// ======================
+// COMPARE
 app.get("/api/compare", (req, res) => {
-
 let a = req.query.a || "A";
 let b = req.query.b || "B";
 
-// stable scoring system
 let scoreA = Math.floor(Math.random()*100);
 let scoreB = Math.floor(Math.random()*100);
-
-let winner = scoreA >= scoreB ? a : b;
 
 res.json({
 playerA: a,
 playerB: b,
 scoreA,
 scoreB,
-winner
+winner: scoreA >= scoreB ? a : b
+});
 });
 
-});
-
-// ======================
-app.listen(3000, () => {
-console.log("🔥 RUNNING ON http://localhost:3000");
+app.listen(process.env.PORT || 3000, () => {
+console.log("RUNNING");
 });
