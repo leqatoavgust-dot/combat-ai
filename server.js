@@ -1,25 +1,21 @@
 import express from "express";
+import path from "path";
 
 const app = express();
 
 app.use(express.static("public"));
 
+// ROOT FIX
 app.get("/", (req, res) => {
-res.sendFile(process.cwd() + "/public/index.html");
+res.sendFile(path.resolve("public/index.html"));
 });
 
 // SCAN
 app.get("/api/scan", (req, res) => {
-let name = req.query.name || "unknown";
-
 res.json({
-name,
+name: req.query.name || "unknown",
 class: "balanced",
-stats: {
-hp: 3200,
-crit: 1400,
-dodge: 900
-}
+stats: { hp: 3200, crit: 1400, dodge: 900 }
 });
 });
 
